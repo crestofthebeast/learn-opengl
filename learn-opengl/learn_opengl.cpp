@@ -14,7 +14,12 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "{\n"
     "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
     "}\n\0";
-
+const char *fragmentShaderSourceAlt = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(0.5f, 1.0f, 0.2f, 1.0f);\n"
+    "}\n\0";
 
 void processInput(GLFWwindow *window)
 {
@@ -78,31 +83,54 @@ int WinMain()
         std::cout << "Failed to initialise GLAD!" << '\n';
     }
     glViewport(0,0,800,600);
+    // == FIRST SHADERPROGRAM == //
+    // set up vertex shader
+    unsigned int vertexShader0 = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader0, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader0);
+    checkShaderError(vertexShader0);
+    // set up fragment shader
+    unsigned int fragmentShader0 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader0, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader0);
+    checkShaderError(fragmentShader0);
+    // then create the shader program with them
+    unsigned int shaderProgram0;
+    shaderProgram0 = glCreateProgram();
+    glAttachShader(shaderProgram0, vertexShader0);
+    glAttachShader(shaderProgram0, fragmentShader0);
+    glLinkProgram(shaderProgram0);
+    checkShaderLinkError(shaderProgram0);
+    // and set it in motion
+    glUseProgram(shaderProgram0);
+    glDeleteShader(vertexShader0);
+    glDeleteShader(fragmentShader0);
+    // == SECOND SHADERPROGRAM == //
     // set up vertex shader
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
     checkShaderError(vertexShader);
     // set up fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    checkShaderError(fragmentShader);
+    unsigned int fragmentShader1 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader1, 1, &fragmentShaderSourceAlt, NULL);
+    glCompileShader(fragmentShader1);
+    checkShaderError(fragmentShader1);
     // then create the shader program with them
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    checkShaderLinkError(shaderProgram);
+    unsigned int shaderProgram1;
+    shaderProgram1 = glCreateProgram();
+    glAttachShader(shaderProgram1, vertexShader);
+    glAttachShader(shaderProgram1, fragmentShader1);
+    glLinkProgram(shaderProgram1);
+    checkShaderLinkError(shaderProgram1);
     // and set it in motion
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProgram1);
     glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(fragmentShader1);
+    
     // tell opengl how to interpret the vertex data we're sending it
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    
     /// define first triangle vertices
     float first_triangle[] = {
         -0.5f,  0.5f, 0.0f,
@@ -152,9 +180,10 @@ int WinMain()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // let's draw!
-        glUseProgram(shaderProgram);
+        glUseProgram(shaderProgram0);
         glBindVertexArray(VAO0);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(shaderProgram1);
         glBindVertexArray(VAO1);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);
