@@ -22,6 +22,14 @@ void processInput(GLFWwindow *window)
     {
         glfwSetWindowShouldClose(window, true);
     }
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_RELEASE)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 }
 
 void checkShaderError(unsigned int shader)
@@ -96,10 +104,19 @@ int WinMain()
     glEnableVertexAttribArray(0);
     // define some vertices
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f
     };
+    // create some indices to define where the triangles are
+    unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
+    };
+    // make an EBO
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
     // and a VBO for them
     unsigned int VBO;
     glGenBuffers(1, &VBO);
@@ -111,6 +128,9 @@ int WinMain()
     // copy array of vertices into the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // push the indices into the EBO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     // set vertex attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -125,7 +145,8 @@ int WinMain()
         // let's draw!
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
