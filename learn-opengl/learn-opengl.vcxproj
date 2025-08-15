@@ -161,6 +161,15 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="learn_opengl.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="3.3.vertex.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="3.3.fragment.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
