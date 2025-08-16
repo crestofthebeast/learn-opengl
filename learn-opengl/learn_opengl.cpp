@@ -60,13 +60,17 @@ int WinMain()
     // copy array of vertices into the VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
     // set vertex attributes. position first
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // then color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    // set offset uniform
+    int offsetLocation = glGetUniformLocation(myShader.ID, "offset");
+    myShader.use();
+    glUniform4f(offsetLocation, 0.2f, 0.2, 0.0f, 0.0f);
     // use the shader program
     while (!glfwWindowShouldClose(window))
     {
