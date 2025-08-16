@@ -67,10 +67,6 @@ int WinMain()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // set offset uniform
-    int offsetLocation = glGetUniformLocation(myShader.ID, "offset");
-    myShader.use();
-    glUniform4f(offsetLocation, 0.2f, 0.2, 0.0f, 0.0f);
     // use the shader program
     while (!glfwWindowShouldClose(window))
     {
